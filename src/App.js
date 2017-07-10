@@ -142,13 +142,8 @@ class App extends Component {
 
 
                 })
-
-
-
                 // data = response.data.datatable.data;console.log(data);
                 self.setState({data: info, higherCount: higherCount, lowerCount: lowerCount, noChangecount: noChangecount});
-
-                //   ReactDOM.render(<App />, document.querySelector("#root"));
             }/*console.log(response)*/)
 
     }
