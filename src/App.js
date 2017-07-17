@@ -3,7 +3,9 @@ import './bower_components/bootstrap/dist/css/bootstrap.min.css';
 import logo from './logo.svg';
 import './App.css';
 import Header from './header.js';
+import Example from './grid.js';
 import bsholes from './bsholes.PNG';
+import ReactDataGrid from 'react-data-grid';
 import axios from 'axios';
 //var ReactDOM = require('react-dom');
 var data;
@@ -55,6 +57,7 @@ class App extends Component {
                         <div className="col-sm-2"><input type="text"></input></div>
                     </div>
                 </form>
+                <Example />
                 <div>
                     <div className="col-md-4">Date</div>
                     <div className="col-md-4">Price</div>
