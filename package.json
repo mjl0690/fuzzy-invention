@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "react": "^15.6.1",
+    "react-data-grid": "^2.0.53",
     "react-dom": "^15.6.1"
   },
   "proxy": "http://localhost:4000",
