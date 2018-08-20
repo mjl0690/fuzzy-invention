@@ -1,49 +1,124 @@
 var http = require('http');
 var request = require("request");
 var jsonBody = [];
-var results = [];
+var results2 = [];
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/stocks";
 
-
-
-
-
-request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=AMZN&interval=1min&outputsize=full&apikey=9BV464T7QBUFGB06", function(error, response, body) {
-
+function getData(ticker){
+//"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=SPX&interval=1day&outputsize=full&apikey=9BV464T7QBUFGB06"
+request("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&interval=1min&symbol="+ticker+"&outputsize=full&apikey=9BV464T7QBUFGB06", function(error, results, body) {
    jsonBody =( JSON.parse(body));
-  /* jsonBody.forEach(function (entry) { console.log(entry);
-        results.push({date: entry[0], open: entry[1], high: entry[2], low: entry[3], close: entry[4]});
-    })*/
-
+ ;
     for(var i in jsonBody["Time Series (1min)"]){
-
-        results.push({date: i,
-
+        results2.push({date: i,
         open: jsonBody["Time Series (1min)"][i]["1. open"],
         high: jsonBody["Time Series (1min)"][i]["2. high"],
         low: jsonBody["Time Series (1min)"][i]["3. low"],
-            close: jsonBody["Time Series (1min)"][i]["4. close"],
-            volume: jsonBody["Time Series (1min)"][i]["5. volume"]
-
-
-
+        close: jsonBody["Time Series (1min)"][i]["4. close"],
+         volume: jsonBody["Time Series (1min)"][i]["5. volume"]
         })
+    }
 
+resistance(results2);
+    for(var j=0; j< Math.ceil(results2.length/391); j++){
+     //   start(391*j,391*(j+1), ticker, results2);
+       
+        }
+        
 
-       }
-/*    MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        db.collection("prices").find({date:'2017-07-24 14:21:00'}).toArray(function (err, result) {
-            if (err) throw err;
-            console.log(result);
-            db.close();
-        });
-    });*/
-
-
-    console.log(results[0]);
 });
+}
+
+getData('AAPL');
+/*getData('MSFT');
+
+getData('AMZN');
+getData('FB');
+getData('JPM');
+getData('JNJ');
+getData('XOM');
+getData('GOOG');
+getData('GOOGL');
+getData('BAC');
+getData('INTC');
+getData('AMD');*/
+
+var closeLow;
+var closeDateLow;
+var closeHigh;
+var closeDateHigh;
+
+function resistance(results){
+var resistance = {};
+results.forEach((results)=>{ 
+    if(results && !resistance[results.low])
+    resistance[results.low]=0;
+
+    
+    if(results && !resistance[results.high])
+    resistance[results.high]=0;
+
+    if (resistance[results.low]>=0)
+    resistance[results.low]++;
+    if (resistance[results.high]>=0)
+    resistance[results.high]++;
+})
+var sortedResistance = [];
+for (var key in resistance){
+    sortedResistance.push({
+        name:key,
+        value:resistance[key]
+    })
+
+}
+
+var byName = sortedResistance.slice().sort(function(a,b){
+    return (b.name > a.name) ? 1 : ((a.name > b.name) ? -1 : 0)
+})
+
+var byValue = sortedResistance.slice().sort(function(a,b){
+    return (b.value > a.value) ? 1 : ((a.value > b.value) ? -1 : 0)
+})
+
+console.log(byValue);
+
+}
+
+function start(start, end, ticker, results){
+    var resistance={};
+    for(var i=start; i<end; i++){
+if(!results[i])
+return;
+        
+
+
+        if(!closeLow && results[i] ){ 
+       closeLow = results[i].low;
+       closeDateLow = results[i].date;
+       closeHigh = results[i].high;
+       closeDateHigh = results[i].date;
+        }
+
+       if( results[i] && closeLow > results[i].low){
+       closeLow = results[i].low;
+       closeDateLow = results[i].date;;
+       }
+
+       if ( results[i] && closeHigh < results[i].high){
+           closeHigh=results[i].high;
+           closeDateHigh=results[i].date;
+       }
+    }
+console.log( ticker, 'High:', closeDateHigh, closeHigh, 'Low:', closeDateLow, closeLow);
+
+var fs = require('fs');
+var file = fs.createWriteStream(ticker+'_'+start+'.txt');
+file.on('error', function(err) { /* error handling */ });
+file.write(ticker+' High: '+ closeDateHigh+' ' + closeHigh+ ' Low: ' + closeDateLow+ ' ' + closeLow + '\n');
+file.end();
+closeDateLow = closeLow = closeHigh = closeDateHigh= undefined;
+}
 
 http.createServer(function(request, res){
 

@@ -33,7 +33,7 @@ const Example = React.createClass({
 
                 })
 
-                info.forEach(function(entry, index, array) {console.log(entry);
+                info.forEach(function(entry, index, array) {
                     if(index === 0) {
                         entry.position = 'first';
                         return;

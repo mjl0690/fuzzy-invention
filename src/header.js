@@ -26,7 +26,7 @@ maxHeight: '100%'};
                                     <span className="icon-bar"></span>
                                     <span className="icon-bar"></span>
                                 </button><div>
-                                <a href="#"><img src={stocklogo}></img></a>
+                                <a href="#">logo {/*<img src={stocklogo}></img>*/}</a>
                             </div>
                             </div>
 
